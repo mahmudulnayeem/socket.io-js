@@ -11,13 +11,14 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("chat", (msg) => {
-    io.emit("chat-message", msg);
-  });
+  socket.join("room1");
+  let roomSize = io.sockets.adapter.rooms.get("room1").size;
+  io.sockets
+    .in("room1")
+    .emit("chat", `Hello, room1! There are ${roomSize} people in this room`);
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+  socket.join("room2");
+  io.sockets.in("room2").emit("chat", "Hello, room2!");
 });
 
 server.listen(8080, () => {
